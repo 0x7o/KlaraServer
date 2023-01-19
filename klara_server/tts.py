@@ -27,7 +27,7 @@ class TTS:
         )
         audio = Audio(audio, rate=self.config.get_config("tts_sample_rate"))
         base64_audio = base64.b64encode(audio.data)
-        return base64_audio
+        return {"audio": base64_audio}
 
 
 if __name__ == "__main__":
