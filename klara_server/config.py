@@ -33,6 +33,11 @@ class Config:
             "whisper_language": "ru",
             "fp16": False,
             "sample_rate": 16000,
+            "tts_model": "v3_1_ru",
+            "tts_language": "ru",
+            "tts_device": "cuda:1",
+            "tts_sample_rate": 48000,
+            "tts_speaker": "kseniya",
         }
         with open(self.config_file, "w") as f:
             json.dump(default_config, f, indent=4)
