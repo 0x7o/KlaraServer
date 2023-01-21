@@ -38,6 +38,9 @@ class Config:
             "tts_device": "cuda:1",
             "tts_sample_rate": 48000,
             "tts_speaker": "kseniya",
+            "nllb_model": "facebook/nllb-200-distilled-600M",
+            "nllb_device": "cuda:1",
+            "nllb_device_index": 1,
         }
         with open(self.config_file, "w") as f:
             json.dump(default_config, f, indent=4)
