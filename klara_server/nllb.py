@@ -25,4 +25,4 @@ class Translate:
         )
         text = translator(f"{gender_name}: {text}", max_length=400)
         text.replace(gender_translation, "")
-        return text
+        return {"text": text}
