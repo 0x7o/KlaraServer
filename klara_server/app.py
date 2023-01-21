@@ -6,8 +6,11 @@ from tts import TTS
 
 app = FastAPI()
 s = STT(Config("config.json"))
+print("STT loaded")
 t = TTS(Config("config.json"))
+print("TTS loaded")
 n = Translate(Config("config.json"))
+print("NLLB loaded")
 
 
 @app.get("/")
