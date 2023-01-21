@@ -9,7 +9,7 @@ class Translate:
         self.model, self.tokenizer = self.load_model()
 
     def load_model(self):
-        model = torch.load("1-3.pt").to(self.config.get_config("nllb_device"))
+        model = torch.load("1-3.pt")
         tokenizer = AutoTokenizer.from_pretrained(self.config.get_config("nllb_model"))
         return model, tokenizer
 
