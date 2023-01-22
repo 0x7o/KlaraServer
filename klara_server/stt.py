@@ -19,8 +19,9 @@ class STT:
             model.load_state_dict(
                 torch.load(self.config.get_config("whisper_model_path"))
             )
+            print(f"Model {self.config.get_config('whisper_model_path')} loaded")
         except:
-            print("No model found")
+            ...
         model.to(self.config.get_config("whisper_device"))
         options = whisper.DecodingOptions(
             language=self.config.get_config("whisper_language"),
