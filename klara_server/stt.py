@@ -2,7 +2,7 @@ import base64
 import numpy as np
 import soundfile as sf
 from config import Config
-from IPython.display import Audio
+import scipy.io.wavefile as wav
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 
@@ -31,9 +31,8 @@ class STT:
 
     def transcribe(self, base64_string):
         self.base64_to_wav(base64_string)
-        audio = Audio("temp.wav")
-        # array([ 0,  0,  0, ..., -1, -1, -1], dtype=float32
-        input_speech = audio.data
+        rate, data = wav.read("temp.wav")
+        input_speech = np.array(data, dtype=np.float32)
         input_features = self.processor(
             input_speech,
             return_tensors="pt",
