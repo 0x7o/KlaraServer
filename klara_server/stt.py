@@ -1,3 +1,4 @@
+import torch
 import base64
 import numpy as np
 import soundfile as sf
@@ -33,6 +34,9 @@ class STT:
         self.base64_to_wav(base64_string)
         rate, data = read("temp.wav")
         input_speech = np.array(data, dtype=np.float32)
+        input_speech = torch.from_numpy(input_speech).to(
+            self.config.get_config("whisper_device")
+        )
         input_features = self.processor(
             input_speech,
             return_tensors="pt",
