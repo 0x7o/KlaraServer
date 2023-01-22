@@ -44,4 +44,4 @@ class STT:
         transcription = self.processor.batch_decode(
             predicted_ids, skip_special_tokens=True
         )
-        return transcription
+        return transcription[0]
