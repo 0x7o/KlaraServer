@@ -1,38 +1,43 @@
 import torch
 import base64
+import whisper
 import numpy as np
+import soundfile as sf
 from config import Config
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 
 class STT:
     def __init__(self, config: Config):
         self.config = config
-        self.model, self.processor = self.load_model()
+        self.model, self.options = self.load_model()
 
     def load_model(self):
-        processor = WhisperProcessor.from_pretrained(
-            self.config.get_config("whisper_model")
+        model = whisper.load_model(
+            self.config.get_config("whisper_base_model"),
         )
-        model = WhisperForConditionalGeneration.from_pretrained(
-            self.config.get_config("whisper_model")
-        ).to(self.config.get_config("whisper_device"))
+        try:
+            model.load_state_dict(
+                torch.load(self.config.get_config("whisper_model_path"))
+            )
+        except:
+            print("No model found")
+        model.to(self.config.get_config("whisper_device"))
+        options = whisper.DecodingOptions(
+            language=self.config.get_config("whisper_language"),
+            fp16=self.config.get_config("fp16"),
+            task="transcribe",
+        )
+        return model, options
 
-        return model, processor
+    def base64_to_wav(self, base64_string):
+        wav_bytes = base64.b64decode(base64_string)
+        wav = np.frombuffer(wav_bytes, dtype=np.int16)
+        sf.write("temp.wav", wav, self.config.get_config("sample_rate"))
 
     def transcribe(self, base64_string):
-        wav_bytes = base64.b64decode(base64_string)
-        input_speech = np.frombuffer(wav_bytes, dtype=np.float32)
-        # input_speech = torch.from_numpy(input_speech)
-        inputs = self.processor.feature_extractor(
-            input_speech, return_tensors="pt", sampling_rate=16_000
-        ).input_features.to(self.config.get_config("whisper_device"))
-        forced_decoder_ids = self.processor.get_decoder_prompt_ids(
-            language=self.config.get_config("whisper_language"), task="transcribe"
-        )
-        predicted_ids = self.model.generate(
-            inputs, max_length=480_000, forced_decoder_ids=forced_decoder_ids
-        )
-        return self.processor.tokenizer.batch_decode(
-            predicted_ids, skip_special_tokens=True, normalize=True
-        )[0]
+        self.base64_to_wav(base64_string)
+        audio = whisper.load_audio("temp.wav")
+        audio = whisper.pad_or_trim(audio)
+        mel = whisper.log_mel_spectrogram(audio).to(self.model.device)
+        transcript = whisper.decode(self.model, mel, self.options)
+        return transcript.text
