@@ -33,8 +33,12 @@ class STT:
         self.base64_to_wav(base64_string)
         audio = Audio("temp.wav")
         input_speech = np.array(audio.data)
+        print(input_speech)
+        return ""
         input_features = self.processor(
-            input_speech, return_tensors="pt"
+            input_speech,
+            return_tensors="pt",
+            sampling_rate=self.config.get_config("sample_rate"),
         ).input_features
         predicted_ids = self.model.generate(input_features)
         transcription = self.processor.batch_decode(
