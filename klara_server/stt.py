@@ -1,9 +1,7 @@
 import torch
 import base64
 import numpy as np
-import soundfile as sf
 from config import Config
-from scipy.io.wavfile import read
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 
@@ -22,15 +20,9 @@ class STT:
 
         return model, processor
 
-    def base64_to_wav(self, base64_string):
-        wav_bytes = base64.b64decode(base64_string)
-        wav = np.frombuffer(wav_bytes, dtype=np.int16)
-        sf.write("temp.wav", wav, self.config.get_config("sample_rate"))
-
     def transcribe(self, base64_string):
-        self.base64_to_wav(base64_string)
-        rate, data = read("temp.wav")
-        input_speech = np.array(data, dtype=np.float32)
+        wav_bytes = base64.b64decode(base64_string)
+        input_speech = np.frombuffer(wav_bytes, dtype=np.float32)
         input_speech = torch.from_numpy(input_speech)
         self.model.config.forced_decoder_ids = self.processor.get_decoder_prompt_ids(
             language=self.config.get_config("whisper_language"), task="transcribe"
