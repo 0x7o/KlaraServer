@@ -28,8 +28,8 @@ class Config:
 
     def create_config(self):
         default_config = {
-            "stt_model": "tiny",
-            "stt_device": "cuda:0",
+            "whisper_model": "openai/whisper-tiny",
+            "whisper_device": "cuda:0",
             "whisper_language": "ru",
             "fp16": False,
             "sample_rate": 16000,
