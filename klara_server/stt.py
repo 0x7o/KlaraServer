@@ -18,7 +18,7 @@ class STT:
         options = whisper.DecodingOptions(
             language=self.config.get_config("whisper_language"),
             fp16=self.config.get_config("fp16"),
-            task="translate",
+            task="transcribe",
         )
         return model, options
 
