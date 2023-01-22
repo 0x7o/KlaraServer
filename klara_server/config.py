@@ -38,6 +38,8 @@ class Config:
             "tts_device": "cuda:1",
             "tts_sample_rate": 48000,
             "tts_speaker": "kseniya",
+            "intent_model": "0x7194633/rubert-base-massive",
+            "intent_device": "cuda:0",
         }
         with open(self.config_file, "w") as f:
             json.dump(default_config, f, indent=4)

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from config import Config
+from intent import Intent
 from stt import STT
 from tts import TTS
 
@@ -8,6 +9,8 @@ s = STT(Config("config.json"))
 print("STT loaded")
 t = TTS(Config("config.json"))
 print("TTS loaded")
+i = Intent(Config("config.json"))
+print("Intent loaded")
 
 
 @app.get("/")
@@ -25,6 +28,12 @@ async def stt(request: Request):
 async def tts(request: Request):
     data = await request.json()
     return t.generate(data["text"])
+
+
+@app.post("/intent")
+async def intent(request: Request):
+    data = await request.json()
+    return i.predict(data["text"])
 
 
 if __name__ == "__main__":
