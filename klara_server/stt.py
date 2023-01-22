@@ -32,6 +32,10 @@ class STT:
             return_tensors="pt",
             sampling_rate=self.config.get_config("sample_rate"),
         ).input_features.to(self.config.get_config("whisper_device"))
-        predicted_ids = self.model.generate(input_features, temperature=1.0, top_p=0.9)
+        with torch.no_grad():
+            logits = self.model(
+                input_features.to(self.config.get_config("whisper_device"))
+            ).logits
+        predicted_ids = torch.argmax(logits, dim=-1)
         transcription = self.processor.batch_decode(predicted_ids)
         return transcription[0]
