@@ -32,7 +32,7 @@ class STT:
     def transcribe(self, base64_string):
         self.base64_to_wav(base64_string)
         audio = Audio("temp.wav")
-        input_speech = np.array(audio.data)
+        input_speech = audio.data
         print(input_speech)
         return ""
         input_features = self.processor(
