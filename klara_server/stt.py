@@ -23,18 +23,16 @@ class STT:
     def transcribe(self, base64_string):
         wav_bytes = base64.b64decode(base64_string)
         input_speech = np.frombuffer(wav_bytes, dtype=np.float32)
-        input_speech = torch.from_numpy(input_speech)
-        self.model.config.forced_decoder_ids = self.processor.get_decoder_prompt_ids(
+        # input_speech = torch.from_numpy(input_speech)
+        inputs = self.processor.feature_extractor(
+            input_speech, return_tensors="pt", sampling_rate=16_000
+        ).input_features.to(self.config.get_config("whisper_device"))
+        forced_decoder_ids = self.processor.get_decoder_prompt_ids(
             language=self.config.get_config("whisper_language"), task="transcribe"
         )
-        input_features = self.processor(
-            input_speech,
-            return_tensors="pt",
-            sampling_rate=self.config.get_config("sample_rate"),
-        ).input_features.to(self.config.get_config("whisper_device"))
         predicted_ids = self.model.generate(
-            input_features,
-            return_dict_in_generate=True,
+            inputs, max_length=480_000, forced_decoder_ids=forced_decoder_ids
         )
-        transcription = self.processor.batch_decode(predicted_ids)
-        return transcription[0]
+        return self.processor.tokenizer.batch_decode(
+            predicted_ids, skip_special_tokens=True, normalize=True
+        )[0]
