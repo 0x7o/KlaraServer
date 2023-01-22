@@ -15,13 +15,11 @@ class STT:
         model = whisper.load_model(
             self.config.get_config("whisper_base_model"),
         )
-        try:
+        if self.config.get_config("whisper_model_path") is not "":
             model.load_state_dict(
                 torch.load(self.config.get_config("whisper_model_path"))
             )
             print(f"Model {self.config.get_config('whisper_model_path')} loaded")
-        except:
-            ...
         model.to(self.config.get_config("whisper_device"))
         options = whisper.DecodingOptions(
             language=self.config.get_config("whisper_language"),
