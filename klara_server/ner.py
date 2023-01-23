@@ -20,4 +20,4 @@ class Ner:
     def get_entities(self, text):
         entities = self.nlp(text)
         print(entities)
-        return entities
+        return []
