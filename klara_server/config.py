@@ -43,6 +43,7 @@ class Config:
             "intent_device": "cuda:0",
             "ner_model_name": "cartesinus/xlm-r-base-amazon-massive-slot",
             "ner_device": "cuda:0",
+            "ner_device_index": 0,
         }
         with open(self.config_file, "w") as f:
             json.dump(default_config, f, indent=4)

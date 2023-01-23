@@ -11,7 +11,7 @@ class Ner:
         self.model = AutoModelForTokenClassification.from_pretrained(
             config.get_config("ner_model_name")
         ).to(config.get_config("ner_device"))
-        self.nlp = pipeline("ner", model=self.model, tokenizer=self.tokenizer)
+        self.nlp = pipeline("ner", model=self.model, tokenizer=self.tokenizer, device=config.get_config("ner_device_index"))
 
     def get_entities(self, text):
         entities = self.nlp(text)
