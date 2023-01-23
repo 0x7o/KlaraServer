@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from config import Config
 from intent import Intent
+from ner import Ner
 from stt import STT
 from tts import TTS
 
@@ -11,6 +12,8 @@ t = TTS(Config("config.json"))
 print("TTS loaded")
 i = Intent(Config("config.json"))
 print("Intent loaded")
+n = Ner(Config("config.json"))
+print("NER loaded")
 
 
 @app.get("/")
@@ -34,6 +37,12 @@ async def tts(request: Request):
 async def intent(request: Request):
     data = await request.json()
     return i.predict(data["text"])
+
+
+@app.post("/ner")
+async def ner(request: Request):
+    data = await request.json()
+    return n.get_entities(data["text"])
 
 
 if __name__ == "__main__":
