@@ -19,5 +19,7 @@ class Ner:
 
     def get_entities(self, text):
         entities = self.nlp(text)
-        print(entities)
-        return []
+        cleaned_entities = []
+        for entity in entities:
+            cleaned_entities.append({"entity": entity["entity"], "word": entity["word"]})
+        return cleaned_entities
